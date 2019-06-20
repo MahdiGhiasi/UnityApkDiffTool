@@ -1,0 +1,88 @@
+﻿<Window x:Class="UnityApkDiffTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UnityApkDiffTool"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Title="Unity APK Diff Tool" Height="450" Width="800">
+    <Grid>
+        <Grid x:Name="selectView">
+            <StackPanel Margin="8">
+                <Grid Margin="0,0,0,8" Height="24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="4" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Original APK:" VerticalAlignment="Center" Grid.Column="0" />
+                    <TextBox x:Name="originalApkText" Grid.Column="1" />
+                    <Button Content="Browse..." Grid.Column="3" Click="OriginalApkBrowse_Click" />
+                </Grid>
+                <Grid Margin="0,0,0,8" Height="24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="4" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Modified APK:" VerticalAlignment="Center" Grid.Column="0" />
+                    <TextBox x:Name="modifiedApkText" Grid.Column="1" />
+                    <Button Content="Browse..." Grid.Column="3" Click="ModifiedApkBrowse_Click" />
+                </Grid>
+                <Grid Margin="0,12,0,0">
+                    <Button Content="Go!"
+                            Height="36"
+                            Width="150"
+                            HorizontalAlignment="Right"
+                            Click="BeginDecompile_Click"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="resultsView" Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="itemsList"
+                              Grid.Row="0"
+                              SelectionChanged="ItemsList_SelectionChanged" />
+                    <StackPanel Grid.Row="1">
+                        <CheckBox x:Name="showDiffOnlyCheckBox" 
+                                  Content="Show diff only"
+                                  IsChecked="True"
+                                  Checked="ShowDiffOnlyCheckBox_CheckedChanged"
+                                  Unchecked="ShowDiffOnlyCheckBox_CheckedChanged"/>
+                        <CheckBox x:Name="darkModeCheckBox" 
+                                  Content="Dark mode"
+                                  IsChecked="False"
+                                  Checked="DarkModeCheckBox_CheckedChanged"
+                                  Unchecked="DarkModeCheckBox_CheckedChanged"/>
+                    </StackPanel>
+                </Grid>
+                <WebBrowser x:Name="webBrowser"
+                            LoadCompleted="WebBrowser_LoadCompleted"
+                            Grid.Row="0"
+                            Grid.Column="1" />
+            </Grid>
+            
+            <TextBlock x:Name="statusText" 
+                       Background="#eee"
+                       Text="Initializing..."
+                       Padding="4,4,0,4"
+                       Grid.Row="1" />
+        </Grid>
+    </Grid>
+</Window>

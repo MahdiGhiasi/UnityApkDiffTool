@@ -1,0 +1,155 @@
+﻿<html>
+<head>
+    <style>
+        .container {
+            font-family: Courier New, Courier, monospace;
+            width: 10000px;
+        }
+
+        .lineNumbers {
+            float: left;
+            width: 80px;
+        }
+
+        .codeContainer {
+            float: left;
+        }
+
+        .codeLine {
+            height: 18px;
+            line-height: 18px;
+        }
+
+        .addedLine {
+            background-color: palegreen;
+        }
+
+        .removedLine {
+            background-color: lightpink;
+        }
+
+        body.dark {
+            background: #222;
+            color: #eee;
+        }
+
+            body.dark .addedLine {
+                background-color: darkgreen;
+            }
+
+            body.dark .removedLine {
+                background-color: darkred;
+            }
+    </style>
+</head>
+<body onload="onload()">
+    <div class="header">
+        <h3>{{TITLE}}</h3>
+    </div>
+    <div class="container">
+        <div class="lineNumbers">
+            {{CODELINES}}
+        </div>
+        <div class="codeContainer">
+            {{CODE}}
+        </div>
+    </div>
+    <script>
+        /* querySelector polyfill */
+        if (!document.querySelectorAll) {
+            document.querySelectorAll = function (selectors) {
+                var style = document.createElement('style'), elements = [], element;
+                document.documentElement.firstChild.appendChild(style);
+                document._qsa = [];
+
+                style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';
+                window.scrollBy(0, 0);
+                style.parentNode.removeChild(style);
+
+                while (document._qsa.length) {
+                    element = document._qsa.shift();
+                    element.style.removeAttribute('x-qsa');
+                    elements.push(element);
+                }
+                document._qsa = null;
+                return elements;
+            };
+        }
+
+        if (!document.querySelector) {
+            document.querySelector = function (selectors) {
+                var elements = document.querySelectorAll(selectors);
+                return (elements.length) ? elements[0] : null;
+            };
+        }
+        /* End of querySelector polyfill */
+
+        function contains(a, obj) {
+            for (var i = 0; i < a.length; i++) {
+                if (a[i] === obj) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function enableDarkMode() {
+            document.body.className = "dark";
+        }
+
+        function showAll() {
+            var lines = document.querySelectorAll(".lineNumbers .codeLine");
+            var codeLines = document.querySelectorAll(".codeContainer .codeLine");
+            for (var i = 0; i < lines.length; i++) {
+                lines[i].style.display = '';
+                codeLines[i].style.display = '';
+                lines[i].style.marginTop = '0';
+                codeLines[i].style.marginTop = '0';
+            }
+
+            var lineToScroll = document.querySelectorAll(".line{{SCROLLTOLINE}}");
+            if (lineToScroll.length > 0) {
+                var rect = lineToScroll[0].getBoundingClientRect();
+                window.scrollTo(0, rect.top);
+            }
+        }
+
+        function showDiffOnly() {
+            var lines = document.querySelectorAll(".lineNumbers .codeLine");
+            var codeLines = document.querySelectorAll(".codeContainer .codeLine");
+            var visibleIndexes = [];
+
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].className.indexOf('addedLine') > 0 || lines[i].className.indexOf('removedLine') > 0) {
+                    visibleIndexes.push(i - 4);
+                    visibleIndexes.push(i - 3);
+                    visibleIndexes.push(i - 2);
+                    visibleIndexes.push(i - 1);
+                    visibleIndexes.push(i);
+                    visibleIndexes.push(i + 1);
+                    visibleIndexes.push(i + 2);
+                    visibleIndexes.push(i + 3);
+                    visibleIndexes.push(i + 4);
+                }
+            }
+
+            for (var i = 0; i < lines.length; i++) {
+                if (!contains(visibleIndexes, i)) {
+                    lines[i].style.display = 'none';
+                    codeLines[i].style.display = 'none';
+                }
+            }
+
+            for (var i = 1; i < lines.length; i++) {
+                if (lines[i - 1].style.display == 'none' && lines[i].style.display != 'none') {
+                    lines[i].style.marginTop = '16px';
+                    codeLines[i].style.marginTop = '16px';
+                }
+            }
+        }
+
+        showDiffOnly();
+
+    </script>
+</body>
+</html>
